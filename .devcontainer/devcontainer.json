@@ -1,0 +1,84 @@
+// =============================================================================
+// VS Code Dev Container 設定
+// Fortran 開發環境 - Mac Mini M2
+// =============================================================================
+{
+    "name": "Fortran Dev Environment",
+
+    // 使用 docker-compose 啟動
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "fortran-dev",
+    "workspaceFolder": "/workspace",
+
+    // 容器內以 vscode 使用者執行
+    "remoteUser": "vscode",
+
+    // VS Code 擴充套件 (容器內安裝)
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // Fortran 語言支援
+                "fortran-lang.linter-gfortran",
+                "hansec.fortran",
+                "ekibun.fortranbreaker",
+                // Fortran Language Server
+                "fortran-lang.linter-gfortran",
+                // C/C++ 除錯 (GDB)
+                "ms-vscode.cpptools",
+                // CMake
+                "ms-vscode.cmake-tools",
+                "twxs.cmake",
+                // Git
+                "eamodio.gitlens",
+                // 其他實用工具
+                "ms-vscode.makefile-tools",
+                "yzhang.markdown-all-in-one",
+                "streetsidesoftware.code-spell-checker",
+                // 主題 (可選)
+                "PKief.material-icon-theme"
+            ],
+            "settings": {
+                // 終端機設定
+                "terminal.integrated.defaultProfile.linux": "bash",
+                // Fortran 設定
+                "fortran.linter.compiler": "gfortran",
+                "fortran.linter.compilerPath": "/usr/bin/gfortran",
+                "fortran.linter.extraArgs": [
+                    "-Wall",
+                    "-Wextra",
+                    "-fcheck=all",
+                    "-fbacktrace",
+                    "-std=f2018"
+                ],
+                "fortran.formatting.formatter": "fprettify",
+                "fortran.formatting.path": "/usr/local/bin/fprettify",
+                // fortls 語言伺服器設定
+                "fortran.fortls.path": "/usr/local/bin/fortls",
+                // 編輯器設定
+                "editor.formatOnSave": true,
+                "editor.tabSize": 4,
+                "editor.insertSpaces": true,
+                "files.trimTrailingWhitespace": true,
+                "files.associations": {
+                    "*.f90": "FortranFreeForm",
+                    "*.f95": "FortranFreeForm",
+                    "*.f03": "FortranFreeForm",
+                    "*.f08": "FortranFreeForm",
+                    "*.f": "FortranFixedForm",
+                    "*.for": "FortranFixedForm"
+                },
+                // GDB 除錯
+                "C_Cpp.default.compilerPath": "/usr/bin/gcc"
+            }
+        }
+    },
+
+    // 容器建立後執行的指令
+    "postCreateCommand": "gfortran --version && echo '✅ Fortran 開發環境就緒！'",
+
+    // 轉發的通訊埠 (如有需要可增加)
+    "forwardPorts": [],
+
+    // 需要的功能
+    "features": {}
+}

@@ -1,0 +1,36 @@
+# Git 忽略規則
+# =============================================================================
+
+# 編譯產物
+*.o
+*.mod
+*.smod
+*.a
+*.so
+*.dylib
+
+# 執行檔 (沒有副檔名的二進位檔)
+examples/01_hello/hello
+examples/02_lapack/solve_linear
+examples/03_mpi/mpi_pi
+examples/04_fftw/fftw_demo
+examples/05_hdf5/hdf5_demo
+
+# HDF5 測試資料
+*.h5
+
+# 建構目錄
+build/
+cmake-build-*/
+
+# IDE
+.idea/
+
+# macOS
+.DS_Store
+._*
+
+# 暫存檔
+*~
+*.swp
+*.swo

@@ -1,0 +1,35 @@
+# =============================================================================
+# Fortran 開發環境 Docker Compose 設定
+# 針對 Apple Silicon (M2) 架構優化
+# =============================================================================
+services:
+  fortran-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fortran-dev-env
+    # 掛載工作目錄
+    volumes:
+      - ..:/workspace:cached
+    # 保持容器執行
+    command: sleep infinity
+    # 平台指定 (Apple Silicon 原生)
+    platform: linux/arm64
+    # 資源限制 (可依需求調整)
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 8G
+    # 環境變數
+    environment:
+      - TZ=Asia/Taipei
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+    # 共享記憶體大小 (MPI 需要)
+    shm_size: "2gb"
+    # 安全選項 (GDB 除錯需要 ptrace)
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE

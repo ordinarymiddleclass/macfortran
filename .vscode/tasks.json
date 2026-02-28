@@ -1,0 +1,121 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Fortran: Build Current File",
+            "type": "shell",
+            "command": "gfortran",
+            "args": [
+                "-g",
+                "-Wall",
+                "-Wextra",
+                "-fcheck=all",
+                "-fbacktrace",
+                "-std=f2018",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "owner": "fortran",
+                "fileLocation": "absolute",
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(Error|Warning|Note):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "Fortran: Build with LAPACK",
+            "type": "shell",
+            "command": "gfortran",
+            "args": [
+                "-g",
+                "-Wall",
+                "-fcheck=all",
+                "-fbacktrace",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-lopenblas",
+                "-llapack"
+            ],
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Fortran: Build with MPI",
+            "type": "shell",
+            "command": "mpif90",
+            "args": [
+                "-g",
+                "-Wall",
+                "-fcheck=all",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Fortran: Build with HDF5",
+            "type": "shell",
+            "command": "h5fc",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Fortran: Build with FFTW",
+            "type": "shell",
+            "command": "gfortran",
+            "args": [
+                "-g",
+                "-Wall",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-lfftw3",
+                "-lm"
+            ],
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Make: Build All Examples",
+            "type": "shell",
+            "command": "make",
+            "args": ["all"],
+            "options": {
+                "cwd": "${workspaceFolder}/examples"
+            },
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Make: Run All Examples",
+            "type": "shell",
+            "command": "make",
+            "args": ["run"],
+            "options": {
+                "cwd": "${workspaceFolder}/examples"
+            },
+            "group": "test",
+            "problemMatcher": []
+        }
+    ]
+}

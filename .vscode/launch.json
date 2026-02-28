@@ -1,0 +1,51 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Fortran: 編譯並除錯目前檔案",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "preLaunchTask": "Fortran: Build Current File",
+            "setupCommands": [
+                {
+                    "description": "啟用 GDB 美化列印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Fortran: 除錯已編譯程式",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/${input:executablePath}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "啟用 GDB 美化列印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "executablePath",
+            "type": "promptString",
+            "description": "輸入執行檔的相對路徑 (例如: examples/01_hello/hello)"
+        }
+    ]
+}
