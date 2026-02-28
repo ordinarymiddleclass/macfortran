@@ -8,9 +8,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: fortran-dev-env
-    # 掛載工作目錄
+    # 掛載工作目錄 & IMSL
     volumes:
       - ..:/workspace:cached
+      # IMSL 商業函式庫掛載點 — 將安裝檔放入專案根目錄的 imsl/ 資料夾
+      # 若尚未取得 IMSL 可先註解此行
+      # - ../imsl:/opt/imsl:cached
     # 保持容器執行
     command: sleep infinity
     # 平台指定 (Apple Silicon 原生)

@@ -1,6 +1,6 @@
-# Fortran 開發環境 (Docker + VS Code Dev Container)
+# Fortran + Python 開發環境 (Docker + VS Code Dev Container)
 
-> 針對 **Mac Mini M2 (Apple Silicon ARM64)** 優化的完整 Fortran 科學計算開發環境
+> 針對 **Mac Mini M2 (Apple Silicon ARM64)** 優化的完整 Fortran 科學計算開發環境，同時支援 Python 科學計算與除錯
 
 ---
 
@@ -10,6 +10,7 @@
 - [前置需求](#前置需求)
 - [快速開始](#快速開始)
 - [包含的函式庫](#包含的函式庫)
+- [IMSL 商業函式庫](#imsl-商業函式庫)
 - [專案結構](#專案結構)
 - [使用方式](#使用方式)
 - [VS Code 功能](#vscode-功能)
@@ -20,16 +21,18 @@
 
 ## 環境概覽
 
-| 項目 | 內容 |
-|------|------|
-| 基礎映像 | Ubuntu 24.04 LTS (ARM64) |
-| Fortran 編譯器 | GFortran (GNU Fortran) |
-| C/C++ 編譯器 | GCC / G++ |
-| 建構工具 | Make, CMake, Ninja |
-| 平行計算 | OpenMPI |
-| 除錯器 | GDB, Valgrind |
-| 程式碼格式化 | fprettify |
-| 語言伺服器 | fortls |
+| 項目           | 內容                               |
+| -------------- | ---------------------------------- |
+| 基礎映像       | Ubuntu 24.04 LTS (ARM64)           |
+| Fortran 編譯器 | GFortran (GNU Fortran)             |
+| C/C++ 編譯器   | GCC / G++                          |
+| 建構工具       | Make, CMake, Ninja                 |
+| 平行計算       | OpenMPI                            |
+| 除錯器         | GDB, Valgrind                      |
+| Python         | Python 3, NumPy, SciPy, Matplotlib |
+| Python 除錯    | debugpy                            |
+| 程式碼格式化   | fprettify                          |
+| 語言伺服器     | fortls                             |
 
 ---
 
@@ -118,49 +121,93 @@ docker compose -f .devcontainer/docker-compose.yml down
 
 ### 數值計算核心
 
-| 函式庫 | 用途 | 連結旗標 |
-|--------|------|----------|
-| **OpenBLAS** | 基礎線性代數 (矩陣乘法等) | `-lopenblas` |
-| **LAPACK** | 進階線性代數 (特徵值、SVD 等) | `-llapack` |
-| **ScaLAPACK** | 分散式平行線性代數 | `-lscalapack-openmpi` |
+| 函式庫        | 用途                          | 連結旗標              |
+| ------------- | ----------------------------- | --------------------- |
+| **OpenBLAS**  | 基礎線性代數 (矩陣乘法等)     | `-lopenblas`          |
+| **LAPACK**    | 進階線性代數 (特徵值、SVD 等) | `-llapack`            |
+| **ScaLAPACK** | 分散式平行線性代數            | `-lscalapack-openmpi` |
 
 ### 信號處理
 
-| 函式庫 | 用途 | 連結旗標 |
-|--------|------|----------|
-| **FFTW3** | 快速傅立葉轉換 | `-lfftw3` |
-| **FFTW3-MPI** | 平行 FFT | `-lfftw3_mpi -lfftw3` |
+| 函式庫        | 用途           | 連結旗標              |
+| ------------- | -------------- | --------------------- |
+| **FFTW3**     | 快速傅立葉轉換 | `-lfftw3`             |
+| **FFTW3-MPI** | 平行 FFT       | `-lfftw3_mpi -lfftw3` |
 
 ### 科學資料 I/O
 
-| 函式庫 | 用途 | 編譯指令 |
-|--------|------|----------|
-| **HDF5** | 高效二進位資料格式 | `h5fc` (包裝編譯器) |
-| **NetCDF** | 網格狀科學資料 | `-lnetcdff -lnetcdf` |
+| 函式庫     | 用途               | 編譯指令             |
+| ---------- | ------------------ | -------------------- |
+| **HDF5**   | 高效二進位資料格式 | `h5fc` (包裝編譯器)  |
+| **NetCDF** | 網格狀科學資料     | `-lnetcdff -lnetcdf` |
 
 ### 平行計算
 
-| 函式庫 | 用途 | 編譯指令 |
-|--------|------|----------|
+| 函式庫      | 用途             | 編譯指令              |
+| ----------- | ---------------- | --------------------- |
 | **OpenMPI** | 訊息傳遞平行計算 | `mpif90` (包裝編譯器) |
 
 ### 進階數值
 
-| 函式庫 | 用途 | 連結旗標 |
-|--------|------|----------|
-| **PETSc** | PDE 求解框架 | 依安裝路徑 |
-| **GSL** | GNU 科學計算庫 | `-lgsl -lgslcblas` |
-| **SuiteSparse** | 稀疏矩陣分解 | `-lumfpack -lamd` |
+| 函式庫          | 用途           | 連結旗標           |
+| --------------- | -------------- | ------------------ |
+| **PETSc**       | PDE 求解框架   | 依安裝路徑         |
+| **GSL**         | GNU 科學計算庫 | `-lgsl -lgslcblas` |
+| **SuiteSparse** | 稀疏矩陣分解   | `-lumfpack -lamd`  |
 
 ### 工具
 
-| 工具 | 用途 |
-|------|------|
-| **Gnuplot** | 命令列繪圖 |
-| **fprettify** | Fortran 程式碼格式化 |
-| **fortls** | Fortran 語言伺服器 (LSP) |
-| **GDB** | GNU 除錯器 |
-| **Valgrind** | 記憶體錯誤偵測 |
+| 工具          | 用途                     |
+| ------------- | ------------------------ |
+| **Gnuplot**   | 命令列繪圖               |
+| **fprettify** | Fortran 程式碼格式化     |
+| **fortls**    | Fortran 語言伺服器 (LSP) |
+| **GDB**       | GNU 除錯器               |
+| **Valgrind**  | 記憶體錯誤偵測           |
+
+### Python 科學計算
+
+| 套件           | 用途                                    |
+| -------------- | --------------------------------------- |
+| **NumPy**      | 陣列與數值運算                          |
+| **SciPy**      | 科學計算 (線性代數、最佳化、信號處理等) |
+| **Matplotlib** | 資料視覺化繪圖                          |
+| **debugpy**    | VS Code Python 除錯支援                 |
+
+---
+
+## IMSL 商業函式庫
+
+IMSL (International Mathematics and Statistics Library) 是 Perforce 的商業授權數值函式庫。本環境採用 **預留掛載點** 方式支援：
+
+### 什麼是預留掛載點？
+
+容器內已預先建立好 `/opt/imsl` 目錄並設定好環境變數 (`IMSL_DIR`、`LD_LIBRARY_PATH`、`PATH`)，但該目錄預設為空。當你取得 IMSL 安裝檔後，只需簡單兩步即可啟用：
+
+### 啟用步驟
+
+1. **將 IMSL 安裝檔放入專案根目錄的 `imsl/` 資料夾**
+
+   ```
+   .
+   ├── imsl/           ← 放入 IMSL 安裝內容
+   │   ├── lib/
+   │   ├── bin/
+   │   └── include/
+   └── .devcontainer/
+   ```
+
+2. **取消 `docker-compose.yml` 中的掛載註解**
+
+   ```yaml
+   volumes:
+     - ..:/workspace:cached
+     - ../imsl:/opt/imsl:cached   # ← 取消此行註解
+   ```
+
+3. **重建容器** — `Cmd+Shift+P` → `Dev Containers: Rebuild Container`
+
+環境變數已預先設定好，掛載後即可直接連結使用。
 
 ---
 
@@ -173,7 +220,7 @@ docker compose -f .devcontainer/docker-compose.yml down
 │   ├── docker-compose.yml   # Docker Compose 設定
 │   └── devcontainer.json    # VS Code Dev Container 設定
 ├── .vscode/
-│   ├── launch.json          # 除錯組態
+│   ├── launch.json          # 除錯組態 (Fortran + Python)
 │   └── tasks.json           # 建構任務
 ├── examples/
 │   ├── Makefile              # 統一建構腳本
@@ -182,6 +229,7 @@ docker compose -f .devcontainer/docker-compose.yml down
 │   ├── 03_mpi/               # MPI 平行計算
 │   ├── 04_fftw/              # FFTW 傅立葉轉換
 │   └── 05_hdf5/              # HDF5 資料讀寫
+├── imsl/                     # IMSL 掛載目錄 (需自行取得)
 └── README.md                 # 本說明文件
 ```
 
@@ -189,7 +237,7 @@ docker compose -f .devcontainer/docker-compose.yml down
 
 ## 使用方式
 
-### 編譯單一檔案
+### 編譯 Fortran 檔案
 
 ```bash
 # 基本編譯
@@ -210,6 +258,17 @@ mpif90 -o myprogram myprogram.f90
 # HDF5 程式
 h5fc -o myprogram myprogram.f90
 ```
+
+### 執行 Python 腳本
+
+```bash
+# 直接執行
+python3 myscript.py
+
+# 或在 VS Code 中按 F5 以除錯模式執行
+```
+
+Python 環境已預裝 NumPy、SciPy、Matplotlib，可直接 `import` 使用。
 
 ### 執行範例程式
 
@@ -274,15 +333,15 @@ fprettify -r ./src/
 
 已預設的建構任務：
 
-| 任務名稱 | 說明 |
-|----------|------|
+| 任務名稱                        | 說明                            |
+| ------------------------------- | ------------------------------- |
 | **Fortran: Build Current File** | 編譯目前開啟的 .f90 檔案 (預設) |
-| **Fortran: Build with LAPACK** | 編譯並連結 LAPACK |
-| **Fortran: Build with MPI** | 使用 mpif90 編譯 |
-| **Fortran: Build with HDF5** | 使用 h5fc 編譯 |
-| **Fortran: Build with FFTW** | 編譯並連結 FFTW3 |
-| **Make: Build All Examples** | 編譯所有範例 |
-| **Make: Run All Examples** | 執行所有範例 |
+| **Fortran: Build with LAPACK**  | 編譯並連結 LAPACK               |
+| **Fortran: Build with MPI**     | 使用 mpif90 編譯                |
+| **Fortran: Build with HDF5**    | 使用 h5fc 編譯                  |
+| **Fortran: Build with FFTW**    | 編譯並連結 FFTW3                |
+| **Make: Build All Examples**    | 編譯所有範例                    |
+| **Make: Run All Examples**      | 執行所有範例                    |
 
 使用方式：
 - `Cmd+Shift+B` → 選擇建構任務
@@ -294,6 +353,7 @@ fprettify -r ./src/
 
 1. **Fortran: 編譯並除錯目前檔案** — 自動編譯並啟動 GDB 除錯
 2. **Fortran: 除錯已編譯程式** — 除錯指定的執行檔
+3. **Python: 執行目前檔案** — 使用 debugpy 執行並除錯 Python 腳本
 
 使用方式：
 1. 在程式碼左側點擊設定中斷點 (紅點)
@@ -306,6 +366,8 @@ fprettify -r ./src/
 - **fortls** — Fortran 語言伺服器 (跳轉定義、懸停提示)
 - **fprettify** — 儲存時自動格式化
 - **C/C++ Tools** — GDB 除錯整合
+- **Python** — Python 語言支援、IntelliSense
+- **debugpy** — Python 除錯支援
 - **CMake Tools** — CMake 專案支援
 - **Makefile Tools** — Makefile 專案支援
 

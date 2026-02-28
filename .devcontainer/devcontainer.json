@@ -4,15 +4,12 @@
 // =============================================================================
 {
     "name": "Fortran Dev Environment",
-
     // 使用 docker-compose 啟動
     "dockerComposeFile": "docker-compose.yml",
     "service": "fortran-dev",
     "workspaceFolder": "/workspace",
-
     // 容器內以 vscode 使用者執行
     "remoteUser": "vscode",
-
     // VS Code 擴充套件 (容器內安裝)
     "customizations": {
         "vscode": {
@@ -30,6 +27,9 @@
                 "twxs.cmake",
                 // Git
                 "eamodio.gitlens",
+                // Python
+                "ms-python.python",
+                "ms-python.debugpy",
                 // 其他實用工具
                 "ms-vscode.makefile-tools",
                 "yzhang.markdown-all-in-one",
@@ -68,17 +68,16 @@
                     "*.for": "FortranFixedForm"
                 },
                 // GDB 除錯
-                "C_Cpp.default.compilerPath": "/usr/bin/gcc"
+                "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+                // Python 設定
+                "python.defaultInterpreterPath": "/usr/bin/python3"
             }
         }
     },
-
     // 容器建立後執行的指令
-    "postCreateCommand": "gfortran --version && echo '✅ Fortran 開發環境就緒！'",
-
+    "postCreateCommand": "gfortran --version && python3 --version && echo '✅ Fortran + Python 開發環境就緒！'",
     // 轉發的通訊埠 (如有需要可增加)
     "forwardPorts": [],
-
     // 需要的功能
     "features": {}
 }

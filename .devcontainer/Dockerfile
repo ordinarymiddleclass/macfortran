@@ -32,11 +32,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gdb \
     valgrind \
     strace \
-    # Python (用於輔助腳本 / 繪圖)
+    # Python (用於輔助腳本 / 繪圖 / 科學計算)
     python3 \
     python3-pip \
     python3-venv \
     python3-numpy \
+    python3-scipy \
     python3-matplotlib \
     # 其他
     locales \
@@ -97,10 +98,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnuplot \
     && rm -rf /var/lib/apt/lists/*
 
-# ---- 11. fprettify (Fortran 程式碼格式化工具) ----
-RUN pip3 install --break-system-packages fprettify fortls
+# ---- 11. IMSL 預留掛載點 (商業授權數值函式庫) ----
+# IMSL 安裝檔需自行取得後放入 host 上的 imsl/ 資料夾，
+# 透過 docker-compose volumes 掛載至 /opt/imsl
+RUN mkdir -p /opt/imsl
+ENV IMSL_DIR="/opt/imsl"
+ENV LD_LIBRARY_PATH="/opt/imsl/lib:${LD_LIBRARY_PATH}"
+ENV PATH="/opt/imsl/bin:${PATH}"
 
-# ---- 12. 建立非 root 使用者 (與 VS Code devcontainer 相容) ----
+# ---- 12. Python 套件 (格式化 / 科學計算 / 除錯) ----
+RUN pip3 install --break-system-packages \
+    fprettify \
+    fortls \
+    scipy \
+    debugpy
+
+# ---- 13. 建立非 root 使用者 (與 VS Code devcontainer 相容) ----
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
@@ -118,7 +131,7 @@ RUN if getent group $USER_GID > /dev/null 2>&1; then \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# ---- 13. 環境變數 ----
+# ---- 14. 環境變數 ----
 ENV PATH="/usr/lib/x86_64-linux-gnu/openmpi/bin:/usr/lib/aarch64-linux-gnu/openmpi/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/lib/aarch64-linux-gnu:${LD_LIBRARY_PATH}"
 
