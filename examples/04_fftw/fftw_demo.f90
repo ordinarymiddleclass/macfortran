@@ -1,6 +1,6 @@
 ! =============================================================================
 ! 範例 4: FFTW — 快速傅立葉轉換
-! 編譯: gfortran -o fftw_demo fftw_demo.f90 -lfftw3 -lm
+! 編譯: gfortran -I/usr/include -o fftw_demo fftw_demo.f90 -lfftw3 -lm
 ! 執行: ./fftw_demo
 ! =============================================================================
 program fftw_demo

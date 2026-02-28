@@ -86,6 +86,7 @@
             "args": [
                 "-g",
                 "-Wall",
+                "-I/usr/include",
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
@@ -99,7 +100,9 @@
             "label": "Make: Build All Examples",
             "type": "shell",
             "command": "make",
-            "args": ["all"],
+            "args": [
+                "all"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/examples"
             },
@@ -110,7 +113,9 @@
             "label": "Make: Run All Examples",
             "type": "shell",
             "command": "make",
-            "args": ["run"],
+            "args": [
+                "run"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/examples"
             },

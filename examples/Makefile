@@ -36,7 +36,7 @@ all: $(TARGETS)
 
 # --- 範例 4: FFTW ---
 04_fftw/fftw_demo: 04_fftw/fftw_demo.f90
-	$(FC) $(FFLAGS) -o $@ $< -lfftw3 -lm
+	$(FC) $(FFLAGS) -I/usr/include -o $@ $< -lfftw3 -lm
 
 # --- 範例 5: HDF5 ---
 05_hdf5/hdf5_demo: 05_hdf5/hdf5_demo.f90
